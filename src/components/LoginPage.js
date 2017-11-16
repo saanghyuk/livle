@@ -1,56 +1,60 @@
+// Libraries
+import React, { Component } from 'react';
+import CheckAuth from './CheckAuth';
 
-import React from 'react'
-import { connect } from 'react-redux';
-
-import { startLogin } from '../actions/auth'
-
-class LoginPage extends React.Component{
-
-    constructor(props){
-        super(props);
-        this.state={id: '', password: ''};
-
-        this.handleIdChange=this.handleIdChange.bind(this);
-        this.handlePasswordChange=this.handlePasswordChange.bind(this);
-        this.handleSubmit=this.handleSubmit.bind(this);
-    }
-
-    handleIdChange(event){
-        console.log(event.target.value);
-        this.setState({id: event.target.value})
-    }
-
-    handlePasswordChange(event){
-        console.log(event.target.value);
-        this.setState({password: event.target.value})
-    }
-    handleSubmit = (event) => {
-        //
-        event.preventDefault();
-        this.props.startLogin(this.state);
-        // this.props.startLogin();
+export default class LoginPage extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: null,
+      password: null,
     };
 
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
 
-    render(){
-        return (
-            <div>
-                <form onSubmit={this.handleSubmit}>
-                    <div>Email</div>
-                    <input onChange={this.handleIdChange} value={this.state.id} name="email" type="text" placeholder="email" />
-                    <input onChange={this.handlePasswordChange} value={this.state.password} name="password" type="password" placeholder="password" />
+  handleChange(e) {
+    const target = e.target;
+    this.setState({
+      [target.name]: target.value,
+    });
+  }
 
-                    <button type="submit">submit</button>
-                </form>
-            </div>
-        );
-    }};
+  handleSubmit(e) {
+    e.preventDefault();
+    CheckAuth(this.state.username, this.state.password)
+      .then(res => console.log('성공적으로 로그인되었습니다.'))
+      .catch(msg => console.log('오류가 발생하였습니다'));
+  }
 
-
-
-
-const mapDispatchToProps = (dispatch) => ({
-   startLogin: (props) => dispatch(startLogin(props))
-});
-
-export default connect(undefined, mapDispatchToProps)(LoginPage);
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <div>
+          <p>USER NAME</p>
+          <input
+            type="text"
+            name="username"
+            value={this.state.username || ''}
+            onChange={this.handleChange}
+            placeholder="이메일을 입력하세요"
+          />
+        </div>
+        <div>
+          <p>PASSWORD</p>
+          <input
+            type="password"
+            name="password"
+            value={this.state.password || ''}
+            onChange={this.handleChange}
+            placeholder="비밀번호를 입력하세요"
+          />
+        </div>
+        <div>
+          <button type="submit">Login</button>
+        </div>
+      </form>
+    );
+  }
+}
